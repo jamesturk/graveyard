@@ -11,5 +11,6 @@ python scraps
 * komodo_rest.py: example of really basic komodo scripting from python
 * layton-maze-puzzle.py: solver for a professor layton puzzle
 * garfield-obj/: a scrapped attempt at a declarative object validator
+* dotstore2/: my second (and hopefully final) attempt at building dotfile tracker
 
-All scraps placed into the public domain by James Turk unless otherwise noted.  
+All scraps placed into the public domain by James Turk unless otherwise noted.
