@@ -1,0 +1,15 @@
+{
+    "manifest_version": 2,
+    "name": "scrapeshell",
+    "description": "XPath scrape shell for chrome",
+    "version": "0.1",
+    "permissions": ["http://*/*"],
+    "browser_action": { },
+    "web_accessible_resources": ["wgxpath.install.js"],
+    "content_scripts": [
+        {
+            "matches": ["http://*/*"],
+            "js": ["script.js"]
+        }
+    ]
+}

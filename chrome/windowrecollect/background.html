@@ -1,0 +1,20 @@
+<html>
+    <script>
+        var curWin = null;
+        chrome.browserAction.onClicked.addListener(function(tab) {
+            // get current window
+            chrome.windows.getCurrent(function(w) { curWin = w; });
+            console.log(curWin);
+            chrome.windows.getAll({populate:true}, function(windows) {
+                for(var i=0; i < windows.length; ++i) {
+                    if(curWin.id != windows[i].id) {
+                        for(j=0; j < windows[i].tabs.length; ++j) {
+
+                            chrome.tabs.move(windows[i].tabs[j].id, {windowId: curWin.id, index:9999});
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</html>

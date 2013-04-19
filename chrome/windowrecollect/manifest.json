@@ -1,0 +1,11 @@
+{
+    "name": "RecollectWindows",
+    "version": "0.0.1",
+    "description": "Recollect Tabs into a single window",
+    "background_page": "background.html",
+    "permissions": ["tabs"],
+    "browser_action": {
+        "default_icon": "recollect.png",
+        "default_title": "Collect All Windows Into This One"
+    }
+}
