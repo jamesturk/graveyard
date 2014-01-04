@@ -1,0 +1,106 @@
+<html>
+<head>
+  <script src="jquery-1.6.1.min.js"></script>
+  <script src="processing-1.2.1.js"></script>
+</head>
+
+<canvas id="canvas1" width="500" height="500"></canvas>
+
+<script id="script1" type="text/javascript">
+
+var config = {
+    GRID_SIZE: 10,
+    b: 0,
+    m: 1,
+    len: 0,
+};
+
+
+// Simple way to attach js code to the canvas is by using a function
+function sketchProc(p) {
+    var GRID_SIZE = 10;
+    var font;
+
+    function convert_coord(n, flip) {
+        if(flip) {
+            return p.width/2-n*(p.width/(GRID_SIZE*2));
+        } else {
+            return p.width/2+n*(p.width/(GRID_SIZE*2));
+        }
+    }
+
+    p.setup = function() {
+        p.size(500, 500);
+        font = p.loadFont("Arial");
+    }
+
+    line_func = function(x) {
+        return convert_coord(config.m*x+config.b, true);
+    }
+
+    x2_func = function(x) {
+        return convert_coord(x*x, true);
+    }
+
+    x3_func = function(x) {
+        return convert_coord(x*x*x, true);
+    }
+
+    p.draw = function() {
+        var centerX = p.width / 2, centerY = p.height / 2;
+
+        p.background(240,240,255);
+
+        p.stroke(0);
+        p.strokeWeight(2);
+        p.line(centerX, 0, centerX, p.height);
+        p.line(0, centerY, p.width, centerY);
+
+        if($('#grid')[0].checked) {
+            p.stroke(128);
+            p.strokeWeight(1);
+            for(var i=0; i < p.width; i += p.width/(GRID_SIZE*2)) {
+                p.line(0, i, p.height, i);
+                p.line(i, 0, i, p.width);
+            }
+        }
+
+        STEP_SIZE = 0.05;
+        if(config.len < 2*GRID_SIZE) {
+            config.len += STEP_SIZE;
+        }
+
+        graph_func = x3_func;
+
+        for(var x=0; x < config.len; x += STEP_SIZE) {
+            // draw function
+            p.stroke(255, 0, 0);
+            p.strokeWeight(2);
+            p.line(convert_coord(-GRID_SIZE+x),
+                   graph_func(-GRID_SIZE+x),
+                   convert_coord(-GRID_SIZE+x+STEP_SIZE),
+                   graph_func(-GRID_SIZE+x+STEP_SIZE));
+        }
+    };
+}
+
+$(function() {
+        $('#update').click(function() {
+            config.m = parseFloat($('#m').val(), 10);
+            config.b = parseFloat($('#b').val(), 10);
+            config.len = 0;
+        });
+});
+
+var canvas = document.getElementById("canvas1");
+var p = new Processing(canvas, sketchProc);
+
+</script>
+
+<div style="height:0px;width:0px;overflow:hidden;"></div>
+
+y=mx+b<br />
+m: <input id="m" value="1" /> <br />
+b: <input id="b" value="0" /> <br />
+<input id="update" type="submit" value="update" />
+<input id="grid" type="checkbox" />
