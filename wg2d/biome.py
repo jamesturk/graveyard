@@ -1,14 +1,9 @@
 import random
 from enum import Enum
 from .utils import weighted_choice
+from .tiles import TileKind
 
 BIOME_SIZE = 20
-
-
-class Tile(Enum):
-    GRASS_1 = 1
-    GRASS_2 = 2
-    DIRT_1 = 3
 
 
 class Biome(object):
@@ -67,15 +62,15 @@ class FieldBiome(Biome):
 
     def generate_naive(self):
         tile_odds = {
-            Tile.GRASS_1: 0.8,
-            Tile.GRASS_2: 0.1,
-            Tile.DIRT_1: 0.1,
+            TileKind.GRASS_1: 0.8,
+            TileKind.GRASS_2: 0.1,
+            TileKind.DIRT_1: 0.1,
         }
         super().generate_naive(tile_odds)
 
     def generate_seedbomb(self):
         rules = {
-            Tile.GRASS_2: {'min': 2, 'max': 10, 'chance': 0.3, 'attenuate': 0.6},
-            Tile.DIRT_1: {'min': 1, 'max': 10, 'chance': 0.3, 'attenuate': 0.3},
+            TileKind.GRASS_2: {'min': 2, 'max': 10, 'chance': 0.3, 'attenuate': 0.6},
+            TileKind.DIRT_1: {'min': 1, 'max': 10, 'chance': 0.3, 'attenuate': 0.3},
         }
-        super().generate_seedbomb(Tile.GRASS_1, rules)
+        super().generate_seedbomb(TileKind.GRASS_1, rules)
