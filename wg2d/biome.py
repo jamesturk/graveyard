@@ -13,7 +13,7 @@ class Biome(object):
 
         for r in range(BIOME_SIZE):
             for c in range(BIOME_SIZE):
-                self.tiles[r][c] = weighted_choice(self.tile_odds)
+                self.tiles[r][c] = weighted_choice(tile_odds)
 
     def generate_seedbomb(self, base_tile, seedbomb_rules):
         self.tiles = [[base_tile]*BIOME_SIZE for _ in range(BIOME_SIZE)]

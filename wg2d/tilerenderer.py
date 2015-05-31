@@ -7,10 +7,10 @@ class Renderer(object):
     def __init__(self, window):
         self.window = window
         self.images = {}
-        self.images[TileKind.GRASS_1] = pyglet.image.load('./wg2d/images/green.jpg')
-        self.images[TileKind.GRASS_2] = pyglet.image.load('./wg2d/images/yellow.jpg')
-        self.images[TileKind.WATER_1] = pyglet.image.load('./wg2d/images/blue.jpg')
-        self.images[TileKind.DIRT_1] = pyglet.image.load('./wg2d/images/brown.jpg')
+        self.images[TileKind.GRASS_1] = pyglet.image.load('./images/grass1.png')
+        self.images[TileKind.GRASS_2] = pyglet.image.load('./images/grass2.png')
+        self.images[TileKind.WATER_1] = pyglet.image.load('./images/blue.jpg')
+        self.images[TileKind.DIRT_1] = pyglet.image.load('./images/dirt1.png')
 
 
     def draw(self, tiles):
