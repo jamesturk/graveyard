@@ -6,7 +6,7 @@ def test_renderer():
     window = pyglet.window.Window()
     renderer = Renderer(window)
     b = FieldBiome()
-    b.generate_seedbomb()
+    b.generate()
 
     @window.event
     def on_draw():
