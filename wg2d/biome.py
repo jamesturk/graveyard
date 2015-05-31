@@ -3,7 +3,7 @@ from enum import Enum
 from .utils import weighted_choice
 from .tiles import TileKind
 
-BIOME_SIZE = 20
+BIOME_SIZE = 30
 
 
 class Biome(object):
@@ -70,7 +70,7 @@ class FieldBiome(Biome):
 
     def generate_seedbomb(self):
         rules = {
-            TileKind.GRASS_2: {'min': 2, 'max': 10, 'chance': 0.3, 'attenuate': 0.6},
-            TileKind.DIRT_1: {'min': 1, 'max': 10, 'chance': 0.3, 'attenuate': 0.3},
+            TileKind.GRASS_2: {'min': 2, 'max': 10, 'chance': 0.7, 'attenuate': 0.6},
+            TileKind.DIRT_1: {'min': 1, 'max': 10, 'chance': 0.5, 'attenuate': 0.3},
         }
         super().generate_seedbomb(TileKind.GRASS_1, rules)

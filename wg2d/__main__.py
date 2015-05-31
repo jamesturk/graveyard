@@ -1,24 +1,17 @@
 import pyglet
+from .biome import FieldBiome
 from .tilerenderer import Renderer
 
 def test_renderer():
     window = pyglet.window.Window()
     renderer = Renderer(window)
-
-    tiles = [[1,2,2,2,2,2,1,1],
-             [1,2,1,1,1,2,1,1],
-             [1,2,1,1,1,2,1,1],
-             [1,1,1,1,1,2,1,1],
-             [1,1,1,1,1,2,1,1],
-             [1,1,1,1,1,2,1,1],
-             [1,2,2,2,2,2,2,1],
-            ]
-
+    b = FieldBiome()
+    b.generate_seedbomb()
 
     @window.event
     def on_draw():
         window.clear()
-        renderer.draw(tiles)
+        renderer.draw(b.tiles)
 
     pyglet.app.run()
 
