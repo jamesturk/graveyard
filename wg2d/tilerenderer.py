@@ -1,6 +1,7 @@
 import pyglet
 from .tiles import TileKind
 
+TILE_SIZE = 16
 
 class Renderer(object):
 
@@ -16,12 +17,5 @@ class Renderer(object):
     def draw(self, tiles):
         """ this draws all of the tiles to the screen """
 
-        pixel_x_coord = 0
-        pixel_y_coord = 0
-
-        for row in tiles:
-            for tile in row:
-                (self.images[tile]).blit(pixel_x_coord, pixel_y_coord)
-                pixel_x_coord += 16
-            pixel_x_coord = 0
-            pixel_y_coord += 16
+        for pos, tile in tiles:
+            self.images[tile].blit(pos.x*TILE_SIZE, pos.y*TILE_SIZE)
