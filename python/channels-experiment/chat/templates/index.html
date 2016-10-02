@@ -1,0 +1,26 @@
+  <html>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+  <body style="background-image: url('http://www.geocities.ws/dopeycodes/backgrounds/stars-bb.gif'); color: limegreen;" >
+      <h1><marquee>CONSPIRACY CHAT</marquee></h4>
+  <input id="chatbox" /><input type="submit" id="go" />
+  <ul id="chat"></ul>
+  <script>
+  const handles = ['moonmoth', 'flatearth', 'chemtrail', 'reptilian', 'themoonexists', 'beemovie4real', 'mothmoon'];
+  const handle = handles[Math.floor(Math.random() * handles.length)] + Math.floor(Math.random() * 100);
+  const socket = new WebSocket("ws://" + window.location.host + window.location.pathname);
+  socket.onmessage = function(e) {
+      const msg = JSON.parse(e.data);
+      $('#chat').append('<li><b>' + msg.handle + '</b>: ' + msg.text + '</li>');
+  }
+  socket.onopen = function() {
+      const msg = JSON.stringify({handle: handle, text: '<i>*joined the chat*</i>'});
+      socket.send(msg);
+  }
+  $('#go').click(function(e) {
+      const msg = JSON.stringify({handle: handle, text: $('#chatbox').val()});
+      socket.send(msg);
+  });
+  $('marquee').text(window.location.pathname.replace('/', '').toUpperCase() + ' CONSPIRACY CHAT');
+  </script>
+  </body>
+  </html>
