@@ -112,15 +112,18 @@ def update_grid():
 @window.event
 def on_key_press(symbol, modifiers):
     print('key press', symbol)
-    if symbol == key.NUM_8:
+    dir = None
+    # keys around J that form a hex
+    if symbol == key.NUM_8 or symbol == key.U:
         dir = 'N'
-    elif symbol == key.NUM_2:
+    elif symbol == key.NUM_2 or symbol == key.M:
         dir = 'S'
 
+    global cx, cy
     cx, cy = grid.neighbor(cx, cy, dir)
 
 @window.event
-def on_key_press(symbol, modifiers):
+def on_key_release(symbol, modifiers):
     print('release')
 
 @window.event

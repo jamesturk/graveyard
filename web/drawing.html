@@ -1,0 +1,74 @@
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.2/fabric.min.js"></script>
+<body>
+<canvas id="c" width="600" height="600"></canvas>
+<script>
+  class Box {
+    constructor(top, left, functype) {
+      var shape = [];
+      shape.push(new fabric.Rect({top: top, left: left, width: 50, height: 50, fill: '#ccc' }));
+
+      if (functype === "and" || functype === "or") {
+        shape.push(new fabric.Circle({top: top+5, left: left-5, radius: 5}));
+        shape.push(new fabric.Circle({top: top+35, left: left-5, radius: 5}));
+      } else if (functype === "not") {
+        shape.push(new fabric.Circle({top: top+20, left: left-5, radius: 5}));
+      }
+
+      // all have an output
+      shape.push(new fabric.Circle({top: top+20, left: left+45, radius: 5}));
+
+      this.functype = functype;
+      this.g = new fabric.Group(shape);
+
+      this.g.perPixelTargetFind = true;
+      this.g.targetFindTolerance = 4;
+      this.g.hasControls = false
+      this.g.hasBorders = false;
+
+      this.lines = [];
+    }
+
+    addLine(lineSide, line) {
+    }
+  }
+
+
+(function() {
+  var canvas = this.__canvas = new fabric.Canvas('c', {
+    hoverCursor: 'pointer',
+    selection: false
+  });
+  var connections = [];
+
+  canvas.on({
+    'object:moving': function(e) {
+      e.target.opacity = 0.5;
+      connections.forEach(c => c.determine())
+    },
+    'object:modified': function(e) {
+      e.target.opacity = 1;
+      connections.forEach(c => c.determine())
+    },
+    'mouse:down': function(options) {
+      //console.log(options.target);
+    }
+  });
+
+  a = new Box(100, 100, 'A');
+  canvas.add(a.g);
+  b = new Box(300, 100, 'B');
+  canvas.add(b.g);
+  and = new Box(200, 200, 'and');
+  canvas.add(and.g);
+  not = new Box(200, 300, 'not');
+  canvas.add(not.g);
+
+  connections.push(new Connection(a, and));
+  connections.forEach(c => canvas.add(c.g))
+
+})();
+</script>
+</body>
+</html>
