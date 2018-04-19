@@ -28,11 +28,7 @@ class DiceTable extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    var counts = [];
-    for(var i=0; i < nextProps.numSides; i++) {
-      counts.push(0);
-    }
-
+    var counts = Array(parseInt(nextProps.numSides)).fill(0);
     return {'counts': counts};
   }
 
@@ -66,16 +62,15 @@ class DiceTable extends Component {
 
   chiSquared() {
     var total = 0;
-    for(var i=0; i < this.props.numSides; i++) {
-      total += this.state.counts[i];
-    }
-
-    var expected = total / this.props.numSides;
-
     var chiSquared = 0;
 
-    for(i=0; i < this.props.numSides; i++) {
-      chiSquared += (this.state.counts[i] - expected) ** 2 / expected;
+    for(var count of this.state.counts) {
+      total += count;
+    }
+    var expected = total / this.props.numSides;
+
+    for(count of this.state.counts) {
+      chiSquared += (count - expected) ** 2 / expected;
     }
 
     return chiSquared;
