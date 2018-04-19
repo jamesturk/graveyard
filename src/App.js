@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
 
+// map degrees-of-freedom (sides-1) to 90, 95, 97.5 and 99% thresholds
+const CHI_SQUARED_CRITICAL = {
+  3: [6.251, 7.815, 9.348, 11.345],
+  5: [9.236, 11.070, 12.833, 15.086],
+  7: [12.017, 14.067, 16.013, 18.475],
+  9: [14.684, 16.919, 19.023, 21.666],
+  11: [17.275, 19.675, 21.920, 24.725],
+  19: [27.204, 30.144, 32.852, 36.191],
+}
+
 class DiceTableRow extends Component {
   render() {
     return (
@@ -11,26 +21,19 @@ class DiceTableRow extends Component {
   }
 }
 
-// map degrees-of-freedom (sides-1) to 90, 95, 97.5 and 99% thresholds
-const CHI_SQUARED_CRITICAL = {
-  3: [6.251, 7.815, 9.348, 11.345],
-  5: [9.236, 11.070, 12.833, 15.086],
-  7: [12.017, 14.067, 16.013, 18.475],
-  9: [14.684, 16.919, 19.023, 21.666],
-  11: [17.275, 19.675, 21.920, 24.725],
-  19: [27.204, 30.144, 32.852, 36.191],
-}
-
 class DiceTable extends Component {
   constructor(props) {
     super(props);
-    var counts = [];
+    this.state = {};
+  }
 
-    for(var i=0; i < this.props.num_sides; i++) {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    var counts = [];
+    for(var i=0; i < nextProps.numSides; i++) {
       counts.push(0);
     }
 
-    this.state = {'counts': counts};
+    return {'counts': counts};
   }
 
   renderRow(i) {
@@ -39,7 +42,7 @@ class DiceTable extends Component {
 
   render() {
     var rows = [];
-    for(var i=0; i < this.props.num_sides; i++) {
+    for(var i=0; i < this.props.numSides; i++) {
       rows.push(this.renderRow(i));
     }
     return (
@@ -48,9 +51,7 @@ class DiceTable extends Component {
         <thead>
           <tr><th>#</th><th>count</th></tr>
         </thead>
-        <tbody>
-          {rows}
-        </tbody>
+        <tbody>{rows}</tbody>
       </table>
       Computed a X<sup>2</sup> of <i>{this.chiSquared()}</i>, probability of bad dice <i>{this.chiSquaredPassage()}</i>
       </div>
@@ -65,15 +66,15 @@ class DiceTable extends Component {
 
   chiSquared() {
     var total = 0;
-    for(var i=0; i < this.props.num_sides; i++) {
+    for(var i=0; i < this.props.numSides; i++) {
       total += this.state.counts[i];
     }
 
-    var expected = total / this.props.num_sides;
+    var expected = total / this.props.numSides;
 
     var chiSquared = 0;
 
-    for(i=0; i < this.props.num_sides; i++) {
+    for(i=0; i < this.props.numSides; i++) {
       chiSquared += (this.state.counts[i] - expected) ** 2 / expected;
     }
 
@@ -81,7 +82,7 @@ class DiceTable extends Component {
   }
 
   chiSquaredPassage() {
-    var table = CHI_SQUARED_CRITICAL[this.props.num_sides-1];
+    var table = CHI_SQUARED_CRITICAL[this.props.numSides-1];
 
     var chiVal = this.chiSquared();
 
@@ -89,9 +90,9 @@ class DiceTable extends Component {
       return '90%';
     } else if(chiVal < table[1]) {
       return '95%';
-    } else if(chiVal < table[1]) {
+    } else if(chiVal < table[2]) {
       return '97.5%';
-    } else if(chiVal < table[4]) {
+    } else if(chiVal < table[3]) {
       return '99%';
     } else {
       return '100%';
@@ -99,11 +100,48 @@ class DiceTable extends Component {
   }
 }
 
+class DicePicker extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {numSides: "4"};
+
+    this.onChange = this.onChange.bind(this);
+  }
+
+  render() {
+    var numbers = ['4', '6', '8', '10', '12', '20'];
+    var options = [];
+
+    for(var n of numbers) {
+      options.push(
+        <React.Fragment key={n}>
+          <input type="radio" name="numSides" value={n} id={'ns' + n}
+           checked={this.state.numSides === n} onChange={this.onChange} />
+          <label htmlFor={'ns' + n}>d{n}</label>
+        </React.Fragment>
+        );
+    }
+
+    return (
+      <div className="dicePicker">
+        {options}
+
+        <DiceTable numSides={this.state.numSides} />
+      </div>
+    )
+  }
+
+  onChange(e) { 
+    this.setState({numSides: e.target.value});
+  }
+}
+
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <DiceTable num_sides="6" />
+        <DicePicker />
       </div>
     );
   }
