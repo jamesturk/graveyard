@@ -14,7 +14,7 @@ class DiceTableRow extends Component {
   render() {
     return (
       <tr>
-        <td><button name="{this.props.n}" onClick={this.props.click}>{this.props.n}</button></td>
+        <td><button name="{this.props.n}" onClick={this.props.click}>{this.props.n+1}</button></td>
         <td>{this.props.count}</td>
       </tr>
     );
@@ -53,7 +53,7 @@ class DiceTable extends Component {
         </thead>
         <tbody>{rows}</tbody>
       </table>
-      Computed a X<sup>2</sup> of <i>{this.chiSquared()}</i>, probability of bad dice <i>{this.chiSquaredPassage()}</i>
+      Computed a <i>X</i><sup>2</sup> of <i>{this.chiSquared().toFixed(2)}</i>, probability of bad dice <i>{this.chiSquaredPassage()}</i>
       </div>
     );
   }
@@ -87,15 +87,15 @@ class DiceTable extends Component {
     var chiVal = this.chiSquared();
 
     if(chiVal < table[0]) {
-      return '90%';
+      return '<90%';
     } else if(chiVal < table[1]) {
-      return '95%';
+      return '90-95%';
     } else if(chiVal < table[2]) {
-      return '97.5%';
+      return '95-97.5%';
     } else if(chiVal < table[3]) {
-      return '99%';
+      return '97.5-99%';
     } else {
-      return '100%';
+      return '>99%';
     }
   }
 }
@@ -137,14 +137,4 @@ class DicePicker extends Component {
   }
 }
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <DicePicker />
-      </div>
-    );
-  }
-}
-
-export default App;
+export default DicePicker;
