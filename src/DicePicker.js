@@ -14,8 +14,8 @@ class DiceTableRow extends Component {
   render() {
     return (
       <tr>
-        <td><button name="{this.props.n}" onClick={this.props.click}>{this.props.n+1}</button></td>
-        <td>{this.props.count}</td>
+        <td><button name={this.props.n} onClick={this.props.click}>{this.props.n+1}</button></td>
+        <td><input data-n={this.props.n} value={this.props.count} onChange={this.props.onChange}/></td>
       </tr>
     );
   }
@@ -25,15 +25,17 @@ class DiceTable extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+
+    this.onChange = this.onChange.bind(this);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    var counts = Array(parseInt(nextProps.numSides)).fill(0);
+    var counts = Array(parseInt(nextProps.numSides, 10)).fill(0);
     return {'counts': counts};
   }
 
   renderRow(i) {
-    return (<DiceTableRow n={i} count={this.state.counts[i]} click={() => this.click(i)} key={i} />);
+    return (<DiceTableRow n={i} count={this.state.counts[i]} click={() => this.click(i)} onChange={this.onChange} key={i} />);
   }
 
   render() {
@@ -57,6 +59,12 @@ class DiceTable extends Component {
   click(i) {
     var newState = this.state;
     newState.counts[i]++;
+    this.setState(newState);
+  }
+
+  onChange(e) {
+    var newState = this.state;
+    newState.counts[e.target.dataset.n] = e.target.value;
     this.setState(newState);
   }
 
