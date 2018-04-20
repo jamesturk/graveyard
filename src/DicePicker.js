@@ -10,13 +10,49 @@ const CHI_SQUARED_CRITICAL = {
   19: [27.204, 30.144, 32.852, 36.191],
 }
 
+class ChiSquaredGraph extends Component {
+  render() {
+    var width = this.props.width;
+    var data = CHI_SQUARED_CRITICAL[this.props.n-1];
+    data.push(data[3] + 5);
+    var scale = width / data[4];
+    var color = ["green", "yellow", "orange", "red", "darkred"];
+    var last = 0;
+    var rects = [];
+
+    for(var i=0; i < data.length; i++) {
+      rects.push(
+      <g transform={"translate(" + scale*last + ", 0)"}>
+       <rect width={(data[i]-last)*scale} height="40" fill={color[i]} />
+       <text y="55" fill="black">{i > 0 ? data[i-1].toFixed(1) : ""}</text>
+      </g>
+      );
+
+      last = data[i];
+    }
+
+    rects.push(
+      <g transform={"translate(" + scale*this.props.chi + ", 0)"}>
+       <rect width="2" height="50" fill="blue" />
+       <text y="55" fill="black">{this.props.chi.toFixed(2)}</text>
+      </g>
+    )
+
+    return (
+      <div><svg width={width} height="100">
+      {rects}
+      </svg></div>
+    );
+  }
+}
+
 class DiceTableRow extends Component {
   render() {
     return (
       <tr>
         <td><button name={this.props.n} onClick={this.props.click}>{this.props.n+1}</button></td>
         <td><input data-n={this.props.n} value={this.props.count} onChange={this.props.onChange}/></td>
-        <td><div class="diceNumBar" style={{width: this.props.percent || 0}}></div></td>
+        <td><div className="diceNumBar" style={{width: this.props.percent || 0}}></div></td>
       </tr>
     );
   }
@@ -51,14 +87,17 @@ class DiceTable extends Component {
       rows.push(this.renderRow(i));
     }
     return (
-      <div class="diceTable">
+      <div className="diceTable">
       <table>
         <thead>
           <tr><th>#</th><th>count</th><th>&nbsp;</th></tr>
         </thead>
         <tbody>{rows}</tbody>
       </table>
-      Computed a <i>X</i><sup>2</sup> of <i>{this.state.chiSquared.toFixed(2)}</i>, probability of bad dice <i>{this.chiSquaredPassage()}</i>
+      <div className="diceSummary">
+        Computed a &Chi;<sup>2</sup> of <i>{this.state.chiSquared.toFixed(2)}</i>. Probability of bad dice <i>{this.chiSquaredPassage()}</i>
+        <ChiSquaredGraph n={this.props.numSides} width={700} chi={this.state.chiSquared} />
+      </div>
       </div>
     );
   }
@@ -75,8 +114,6 @@ class DiceTable extends Component {
     for(count of this.state.counts) {
       newState.chiSquared += (count - newState.expected) ** 2 / newState.expected;
     }
-
-    console.log(newState);
   }
 
   click(i) {
