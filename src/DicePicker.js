@@ -16,6 +16,7 @@ class DiceTableRow extends Component {
       <tr>
         <td><button name={this.props.n} onClick={this.props.click}>{this.props.n+1}</button></td>
         <td><input data-n={this.props.n} value={this.props.count} onChange={this.props.onChange}/></td>
+        <td><div class="diceNumBar" style={{width: this.props.percent || 0}}></div></td>
       </tr>
     );
   }
@@ -31,11 +32,17 @@ class DiceTable extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     var counts = Array(parseInt(nextProps.numSides, 10)).fill(0);
-    return {'counts': counts};
+    return {'counts': counts, 'expected': 0, 'chiSquared': 0, 'total': 0};
   }
 
   renderRow(i) {
-    return (<DiceTableRow n={i} count={this.state.counts[i]} click={() => this.click(i)} onChange={this.onChange} key={i} />);
+    return (<DiceTableRow n={i} 
+       count={this.state.counts[i]}
+       percent={this.state.counts[i] / this.state.total * 100}
+       click={() => this.click(i)}
+       onChange={this.onChange}
+       key={i}
+       />);
   }
 
   render() {
@@ -44,50 +51,51 @@ class DiceTable extends Component {
       rows.push(this.renderRow(i));
     }
     return (
-      <div>
+      <div class="diceTable">
       <table>
         <thead>
-          <tr><th>#</th><th>count</th></tr>
+          <tr><th>#</th><th>count</th><th>&nbsp;</th></tr>
         </thead>
         <tbody>{rows}</tbody>
       </table>
-      Computed a <i>X</i><sup>2</sup> of <i>{this.chiSquared().toFixed(2)}</i>, probability of bad dice <i>{this.chiSquaredPassage()}</i>
+      Computed a <i>X</i><sup>2</sup> of <i>{this.state.chiSquared.toFixed(2)}</i>, probability of bad dice <i>{this.chiSquaredPassage()}</i>
       </div>
     );
+  }
+
+  updateStats(newState) {
+    newState.total = 0;
+    for(var count of this.state.counts) {
+      newState.total += count;
+    }
+
+    newState.expected = this.state.total / this.props.numSides;
+    newState.chiSquared = 0;
+
+    for(count of this.state.counts) {
+      newState.chiSquared += (count - newState.expected) ** 2 / newState.expected;
+    }
+
+    console.log(newState);
   }
 
   click(i) {
     var newState = this.state;
     newState.counts[i]++;
+    this.updateStats(newState);
     this.setState(newState);
   }
 
   onChange(e) {
     var newState = this.state;
-    newState.counts[e.target.dataset.n] = e.target.value;
+    newState.counts[e.target.dataset.n] = parseInt(e.target.value, 10);
+    this.updateStats(newState);
     this.setState(newState);
-  }
-
-  chiSquared() {
-    var total = 0;
-    var chiSquared = 0;
-
-    for(var count of this.state.counts) {
-      total += count;
-    }
-    var expected = total / this.props.numSides;
-
-    for(count of this.state.counts) {
-      chiSquared += (count - expected) ** 2 / expected;
-    }
-
-    return chiSquared;
   }
 
   chiSquaredPassage() {
     var table = CHI_SQUARED_CRITICAL[this.props.numSides-1];
-
-    var chiVal = this.chiSquared();
+    var chiVal = this.state.chiSquared;
 
     if(chiVal < table[0]) {
       return '<90%';
@@ -127,8 +135,10 @@ class DicePicker extends Component {
     }
 
     return (
-      <div className="dicePicker">
+      <div className="diceTester">
+        <div className="dicePicker">
         {options}
+        </div>
 
         <DiceTable numSides={this.state.numSides} />
       </div>

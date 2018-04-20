@@ -4,6 +4,21 @@ body {
   font-family: sans-serif;
 }
 
-div { 
-  border: 1px solid black;
+div.dicePicker {
+  padding: 1em;
+  width: 100%;
+}
+
+div.dicePicker label {
+  padding-right: 1em;
+  padding-left: 0.2em;
+}
+
+div.diceTable {
+  padding: 1em;
+}
+
+div.diceNumBar {
+  background-color: black;
+  height: 1em;
 }
