@@ -61,6 +61,7 @@ const dataBlocks = {
     ]
   },
   exhaustion: {
+    header: ["Level", "Effect"],
     data: [
       ['1', 'Disadvantage on ability checks'],
       ['2', 'Speed halved'],
@@ -71,6 +72,7 @@ const dataBlocks = {
     ]
   },
   lifestyle: {
+    header: ["Lifestyle", "Cost / Day"],
     data: [
       ["Wretched", "0"],
       ["Squalid", "1 sp"],
