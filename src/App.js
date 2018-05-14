@@ -37,9 +37,7 @@ class InfoBlock extends Component {
     );
     return (<table>
       <thead><tr>{head}</tr></thead>
-      <tbody>
-      {rows}
-      </tbody>
+      <tbody>{rows}</tbody>
     </table>);
   }
 }
