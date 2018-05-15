@@ -1,15 +1,35 @@
-import React, { Component } from 'react';
-import dataBlocks from './data.js';
+import React from 'react';
+import dataBlocks from './data';
 
-class InfoBlock extends Component {
+class InfoBlock extends React.Component {
+  renderAsDefinition() {
+    const terms = this.content.data.map(d =>
+      <React.Fragment key={d[0]}><dt>{d[0]}</dt><dd>{d[1]}</dd></React.Fragment>);
+    return (<dl>{terms}</dl>);
+  }
+
+  renderAsTable() {
+    let head = '';
+    if (this.content.header) {
+      head = this.content.header.map(d => <th key={d}>{d}</th>);
+    }
+    const rows = this.content.data.map(d =>
+      <tr key={d[0]}><td>{d[0]}</td><td>{d[1]}</td></tr>);
+    return (
+      <table>
+        <thead><tr>{head}</tr></thead>
+        <tbody>{rows}</tbody>
+      </table>);
+  }
+
   render() {
-    let content = dataBlocks[this.props.type];
+    this.content = dataBlocks[this.props.type];
     let inner = '';
 
-    if(this.props.layout === 'definition') {
-      inner = this.renderAsDefinition(content);
+    if (this.props.layout === 'definition') {
+      inner = this.renderAsDefinition();
     } else {
-      inner = this.renderAsTable(content);
+      inner = this.renderAsTable();
     }
 
     return (
@@ -19,72 +39,42 @@ class InfoBlock extends Component {
       </div>
     );
   }
-
-  renderAsDefinition(content) {
-    const terms = content.data.map(
-      (d, i) => <React.Fragment key={i}><dt>{d[0]}</dt><dd>{d[1]}</dd></React.Fragment>
-    );
-    return (<dl>{terms}</dl>);
-  }
-
-  renderAsTable(content) {
-    const head = (content.header || ["", ""]).map(
-      (d, i) => <th key={i}>{d}</th>
-    );
-    const rows = content.data.map(
-      (d, i) => <tr key={i}><td>{d[0]}</td><td>{d[1]}</td></tr>
-    );
-    return (<table>
-      <thead><tr>{head}</tr></thead>
-      <tbody>{rows}</tbody>
-    </table>);
-  }
 }
 
-class Page extends Component {
+class Page extends React.PureComponent {
   render() {
-    const blocks = this.props.blocks.map((b, i) => <InfoBlock type={b} key={i} />);
+    const blocks = this.props.blocks.map(b => <InfoBlock type={b} key={b} />);
     return (
       <div className="page sheet">
         {blocks}
       </div>
-    )
+    );
   }
 }
 
-class Controls extends Component {
+class Controls extends React.PureComponent {
   render() {
     return (
       <div className="controls">
         <button id="addPage" onClick={this.props.addPage}>Add Page</button>
         <button id="removePage" onClick={this.props.removePage}>Remove Page</button>
       </div>
-    )
+    );
   }
 }
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       pages: [
         ['actions', 'exhaustion'],
         ['lifestyle'],
-      ]
+      ],
     };
-    
+
     this.addPage = this.addPage.bind(this);
     this.removePage = this.removePage.bind(this);
-  }
-
-  render() {
-    const pages = this.state.pages.map((p, i) => <Page blocks={p} key={i} />);
-    return (
-      <div className="App">
-        <Controls addPage={this.addPage} removePage={this.removePage} />
-        {pages}
-      </div>
-    );
   }
 
   addPage() {
@@ -93,6 +83,16 @@ class App extends Component {
 
   removePage() {
     this.state.pages.pop();
+  }
+
+  render() {
+    const pages = this.state.pages.map(p => <Page blocks={p} />);
+    return (
+      <div className="App">
+        <Controls addPage={this.addPage} removePage={this.removePage} />
+        {pages}
+      </div>
+    );
   }
 }
 
